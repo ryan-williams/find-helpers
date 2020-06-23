@@ -24,6 +24,11 @@ alias ff2="find-files-maxdepth 2"
 alias ff3="find-files-maxdepth 3"
 alias ff4="find-files-maxdepth 4"
 
+alias fd1="find-dirs-maxdepth 1"
+alias fd2="find-dirs-maxdepth 2"
+alias fd3="find-dirs-maxdepth 3"
+alias fd4="find-dirs-maxdepth 4"
+
 alias fnd=find-fullname
 
 alias fl="find-maxdepth 1 -type l"
