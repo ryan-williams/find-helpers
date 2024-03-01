@@ -50,3 +50,21 @@ alias fd3="find-dirs-n 3"
 alias fd4="find-dirs-n 4"
 
 alias f=find
+
+file_shas() {
+    if [ $# -eq 0 ]; then
+        dir=.
+    elif [ $# -eq 1 ]; then
+        dir="${1%/}"; shift
+    else
+        echo "Usage: file_shas [dir]" >&2
+        return 1
+    fi
+    pushd "$dir" &> /dev/null
+    find . -type f -exec shasum {} \; | sed 's/ .\// /'
+    rv=$?
+    popd
+    return $rv
+}
+export -f file_shas
+defn fsh file_shas
