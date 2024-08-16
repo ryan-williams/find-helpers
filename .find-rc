@@ -68,3 +68,5 @@ file_shas() {
 }
 export -f file_shas
 defn fsh file_shas
+
+defn rme rm-empty
