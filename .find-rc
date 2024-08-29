@@ -70,3 +70,12 @@ export -f file_shas
 defn fsh file_shas
 
 defn rme rm-empty
+
+find_sizes() {
+    if [ $# -eq 0 ]; then
+        set -- .
+    fi
+    find "$@" -type f -printf "%s %p\n"
+}
+export -f find_sizes
+defn fsz find_sizes
