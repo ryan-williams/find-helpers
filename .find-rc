@@ -3,53 +3,243 @@ if which gfind &> /dev/null; then
   defn find gfind
 fi
 
-alias fn=find-name
-alias fns=find-suffix
-alias fs=find-suffix
-alias fnp=find-prefix
-alias fp=find-prefix
+find_toggle_dry_run() {
+    if [ -n "$FIND_DRY_RUN" ]; then
+        unset FIND_DRY_RUN
+    else
+        FIND_DRY_RUN=1
+    fi
+    echo "FIND_DRY_RUN=$FIND_DRY_RUN" >&2
+}
+export -f find_toggle_dry_run
+defn fdr find_toggle_dry_run
 
-alias fn1="find-maxdepth-name 1"
-alias fn2="find-maxdepth-name 2"
-alias fn3="find-maxdepth-name 3"
-alias fn4="find-maxdepth-name 4"
-alias fnn=find-maxdepth-name
+find_x() {
+    if [ -n "$FIND_DRY_RUN" ]; then
+        echo "Would run: find $@" >&2
+    else
+        find "$@" | perl -pe 's/^\.\///' | grep -v '^\.$'
+    fi
+}
+export -f find_x
+defn f find_x
+defn fx find_x
 
-alias f1="find-maxdepth 1"
-alias f2="find-maxdepth 2"
-alias f3="find-maxdepth 3"
+find_fullname() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_fullname <name> [path] [opts...]" >&2
+        return 1
+    fi
+    fullname="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -name "$fullname" "$@"
+}
+export -f find_fullname
+defn ffn find_fullname
 
-alias ff1="find-files-maxdepth 1"
-alias ff2="find-files-maxdepth 2"
-alias ff3="find-files-maxdepth 3"
-alias ff4="find-files-maxdepth 4"
+find_suffix() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_suffix <suffix> [path] [opts...]" >&2
+        return 1
+    fi
+    suffix="$1"; shift
+    find_fullname "*$suffix" "$@"
+}
+export -f find_suffix
+defn fs find_suffix
+defn fns find_suffix
 
-alias fd1="find-dirs-maxdepth 1"
-alias fd2="find-dirs-maxdepth 2"
-alias fd3="find-dirs-maxdepth 3"
-alias fd4="find-dirs-maxdepth 4"
+find_prefix() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_prefix <prefix> [path] [opts...]" >&2
+        return 1
+    fi
+    prefix="$1"; shift
+    find_fullname "$prefix*" "$@"
+}
+export -f find_prefix
+defn fp find_prefix
+defn fnp find_prefix
 
-alias fnd=find-fullname
+find_name() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_name <name> [path] [opts...]" >&2
+        return 1
+    fi
+    name="$1"; shift
+    find_fullname "*$name*" "$@"
+}
+export -f find_name
+defn fn find_name
 
-alias fl="find-maxdepth 1 -type l"
-alias nls="find-maxdepth 1 -type l | wc -l"
+find_wholename() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_wholename <name> [path] [opts...]" >&2
+        return 1
+    fi
+    wholename="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -wholename "$wholename" "$@"
+}
+export -f find_wholename
+defn fw find_wholename
 
-alias flr="find . -type l"
-alias nlr="find . -type l | wc -l"
+find_in_wholename() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_in_wholename <name> [path] [opts...]" >&2
+        return 1
+    fi
+    name="$1"; shift
+    find_wholename "*$name*" "$@"
+}
+export -f find_in_wholename
+defn fiw find_in_wholename
 
-alias ff=find-files
-alias ffn=find-files-n
-alias ff2="find-files-n 2"
-alias ff3="find-files-n 3"
-alias ff4="find-files-n 4"
+find_maxdepth() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_maxdepth <maxdepth> [path] [opts...]" >&2
+        return 1
+    fi
+    maxdepth="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -maxdepth "$maxdepth" "$@"
+}
+export -f find_maxdepth
+defn fmd find_maxdepth
+defn f1 find_maxdepth 1
+defn f2 find_maxdepth 2
+defn f3 find_maxdepth 3
 
-alias fd=find-dirs
-alias fdn=find-dirs-n
-alias fd2="find-dirs-n 2"
-alias fd3="find-dirs-n 3"
-alias fd4="find-dirs-n 4"
+find_maxdepth_fullname() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: find_maxdepth_fullname <maxdepth> <name> [path] [opts...]" >&2
+        return 1
+    fi
+    maxdepth="$1"; shift
+    name="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -maxdepth "$maxdepth" -name "$name" "$@"
+}
+export -f find_maxdepth_fullname
+defn fmfn find_maxdepth_name
+defn ffn1 find_maxdepth_name 1
+defn ffn2 find_maxdepth_name 2
+defn ffn3 find_maxdepth_name 3
+defn ffn4 find_maxdepth_name 4
 
-alias f=find
+find_maxdepth_name() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: find_maxdepth_name <maxdepth> <name> [path] [opts...]" >&2
+        return 1
+    fi
+    maxdepth="$1"; shift
+    name="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -maxdepth "$maxdepth" -name "*$name*" "$@"
+}
+export -f find_maxdepth_name
+defn fmn find_maxdepth_name
+defn fn1 find_maxdepth_name 1
+defn fn2 find_maxdepth_name 2
+defn fn3 find_maxdepth_name 3
+defn fn4 find_maxdepth_name 4
+
+find_type() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: find_type <type> [path] [opts...]" >&2
+        return 1
+    fi
+    type="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -type "$type" "$@"
+}
+export -f find_type
+defn ft find_type
+defn find_files find_type f
+defn ff find_type f
+defn find_dirs find_type d
+defn fd find_type d
+defn find_links find_type l
+defn fl find_type l
+
+find_type_maxdepth() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: find_type_maxdepth <type> <maxdepth> [path] [opts...]" >&2
+        return 1
+    fi
+    type="$1"; shift
+    maxdepth="$1"; shift
+    if [ $# -gt 0 ] && ! [[ "$1" = -* ]]; then
+        path=("$1"); shift
+    else
+        path=(.)
+    fi
+    find_x "${path[@]}" -maxdepth "$maxdepth" -type "$type" "$@"
+}
+export -f find_type_maxdepth
+defn fmt find_type_maxdepth
+defn ftm find_type_maxdepth
+defn find_dirs_maxdepth find_type_maxdepth d
+defn fdd find_type_maxdepth d
+defn fdn find_type_maxdepth d
+defn fd1 find_type_maxdepth d 1
+defn fd2 find_type_maxdepth d 2
+defn fd3 find_type_maxdepth d 3
+defn fd4 find_type_maxdepth d 4
+defn lsd find_type_maxdepth d 1
+
+defn find_files_maxdepth find_type_maxdepth f
+defn ffd find_type_maxdepth f
+defn ff1 find_type_maxdepth f 1
+defn ff2 find_type_maxdepth f 2
+defn ff3 find_type_maxdepth f 3
+defn ff4 find_type_maxdepth f 4
+
+defn find_links_maxdepth find_type_maxdepth l
+defn fld find_type_maxdepth l
+defn fln find_type_maxdepth l
+defn fl1 find_type_maxdepth l 1
+defn fl2 find_type_maxdepth l 2
+defn fl3 find_type_maxdepth l 3
+defn fl4 find_type_maxdepth l 4
+defn lln find_type_maxdepth l 1
+
+find_empty() {
+    find_files "$@" -empty
+}
+export -f find_empty
+defn fe find_empty
+
+find_empty_delete() {
+    find_files "$@" -empty -delete
+}
+export -f find_empty_delete
+defn fed find_empty_delete
+defn rme find_empty_delete
 
 file_shas() {
     if [ $# -eq 0 ]; then
@@ -69,13 +259,11 @@ file_shas() {
 export -f file_shas
 defn fsh file_shas
 
-defn rme rm-empty
-
 find_sizes() {
     if [ $# -eq 0 ]; then
         set -- .
     fi
-    find "$@" -type f -printf "%s %p\n"
+    find_files "$@" -printf "%s %p\n"
 }
 export -f find_sizes
 defn fsz find_sizes
