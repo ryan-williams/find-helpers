@@ -27,7 +27,7 @@ defn fx find_x
 
 find_fullname() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_fullname <name> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <name> [path] [opts...]" >&2
         return 1
     fi
     fullname="$1"; shift
@@ -43,7 +43,7 @@ defn ffn find_fullname
 
 find_suffix() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_suffix <suffix> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <suffix> [path] [opts...]" >&2
         return 1
     fi
     suffix="$1"; shift
@@ -55,7 +55,7 @@ defn fns find_suffix
 
 find_prefix() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_prefix <prefix> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <prefix> [path] [opts...]" >&2
         return 1
     fi
     prefix="$1"; shift
@@ -67,7 +67,7 @@ defn fnp find_prefix
 
 find_name() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_name <name> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <name> [path] [opts...]" >&2
         return 1
     fi
     name="$1"; shift
@@ -78,7 +78,7 @@ defn fn find_name
 
 find_wholename() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_wholename <name> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <name> [path] [opts...]" >&2
         return 1
     fi
     wholename="$1"; shift
@@ -94,7 +94,7 @@ defn fw find_wholename
 
 find_in_wholename() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_in_wholename <name> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <name> [path] [opts...]" >&2
         return 1
     fi
     name="$1"; shift
@@ -105,7 +105,7 @@ defn fiw find_in_wholename
 
 find_maxdepth() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_maxdepth <maxdepth> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <maxdepth> [path] [opts...]" >&2
         return 1
     fi
     maxdepth="$1"; shift
@@ -124,7 +124,7 @@ defn f3 find_maxdepth 3
 
 find_maxdepth_fullname() {
     if [ $# -lt 2 ]; then
-        echo "Usage: find_maxdepth_fullname <maxdepth> <name> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <maxdepth> <name> [path] [opts...]" >&2
         return 1
     fi
     maxdepth="$1"; shift
@@ -145,7 +145,7 @@ defn ffn4 find_maxdepth_name 4
 
 find_maxdepth_name() {
     if [ $# -lt 2 ]; then
-        echo "Usage: find_maxdepth_name <maxdepth> <name> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <maxdepth> <name> [path] [opts...]" >&2
         return 1
     fi
     maxdepth="$1"; shift
@@ -166,7 +166,7 @@ defn fn4 find_maxdepth_name 4
 
 find_type() {
     if [ $# -eq 0 ]; then
-        echo "Usage: find_type <type> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <type> [path] [opts...]" >&2
         return 1
     fi
     type="$1"; shift
@@ -188,7 +188,7 @@ defn fl find_type l
 
 find_type_maxdepth() {
     if [ $# -lt 2 ]; then
-        echo "Usage: find_type_maxdepth <type> <maxdepth> [path] [opts...]" >&2
+        echo "Usage: ${FUNCNAME[0]} <type> <maxdepth> [path] [opts...]" >&2
         return 1
     fi
     type="$1"; shift
@@ -247,7 +247,7 @@ file_shas() {
     elif [ $# -eq 1 ]; then
         dir="${1%/}"; shift
     else
-        echo "Usage: file_shas [dir]" >&2
+        echo "Usage: ${FUNCNAME[0]} [dir]" >&2
         return 1
     fi
     pushd "$dir" &> /dev/null
